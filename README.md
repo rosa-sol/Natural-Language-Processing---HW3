@@ -1,4 +1,4 @@
-## Natural-Language-Processing---HW3
+## HW3 Natural-Language-Processing Report:
 1. Project Overview
 2. Dataset Description
 3. Model Architectures Used
