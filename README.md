@@ -11,7 +11,6 @@ This project implements and compares neural network models for two natural langu
 
 Both tasks are implemented in PyTorch and experiment with two neural network architectures (GRU and Basic RNN) crossed with two embedding types (GloVe and One-Hot), producing four experimental configurations per task and eight total experiments.
 
----
 
 ## 2. Dataset Description
 
@@ -21,7 +20,6 @@ WikiText-2 is a language modeling benchmark dataset extracted from verified Wiki
 ### Multi30K (Task 2)
 Multi30K is a multilingual image caption dataset containing approximately 30,000 English-German sentence pairs. Each sentence is a short description of a Flickr image, making the language relatively simple and concrete. The dataset is widely used as a benchmark for neural machine translation research, particularly for evaluating seq2seq models at a manageable scale. It is split into train (29,000 pairs), validation (1,014 pairs), and test (1,000 pairs) sets. The dataset is downloaded automatically from the Multi30K GitHub repository on first run and cached locally in a `data/` folder.
 
----
 
 ## 3. Model Architectures Used
 
@@ -37,7 +35,6 @@ The RNN is used in the same encoder-decoder configuration as the GRU for Task 2,
 
 Both architectures use 2 stacked layers and a hidden dimension of 256, with a dropout rate of 0.3 applied between layers.
 
----
 
 ## 4. Word Embedding Methods
 
@@ -51,13 +48,11 @@ One-hot encoding represents each word as a sparse binary vector of length equal 
 
 One-hot encoding serves as a baseline for comparison against GloVe. The expectation is that GloVe embeddings will produce better results, particularly on smaller datasets, because they carry pre-learned linguistic knowledge. The tradeoff is that one-hot models have significantly more parameters due to the larger embedding dimension, which increases both memory usage and training time.
 
----
 
 ## 5. Experimental Results
 
 *Results to be filled in after running experiments.*
 
----
 
 ## 6. Comparison of Models
 
@@ -70,7 +65,6 @@ GloVe embeddings are expected to outperform one-hot encodings on both tasks, par
 ### Task 1 vs Task 2
 Text generation is a simpler task than machine translation in the sense that it only requires modeling one language. Machine translation introduces the additional challenge of aligning two different languages and generating coherent output in the target language, which generally makes it harder to achieve good performance. BLEU scores for neural machine translation on Multi30K with small models are typically in the range of 10–25, which reflects this difficulty.
 
----
 
 ## 7. Challenges Faced During Implementation
 
@@ -84,7 +78,6 @@ Text generation is a simpler task than machine translation in the sense that it 
 
 **GloVe download size:** The GloVe 6B embeddings zip file is approximately 860 MB. On slower connections this can be a significant wait on first run. The file is cached locally after the first download so subsequent runs are unaffected.
 
----
 
 ## 8. Limitations of the Considered Models
 
@@ -98,7 +91,6 @@ Text generation is a simpler task than machine translation in the sense that it 
 
 **Vocabulary coverage:** Words appearing fewer than the minimum frequency threshold are mapped to the unknown token. For Multi30K, which is a relatively small dataset, this means a non-trivial fraction of tokens in the test set may be unknown to the model, particularly for morphologically complex German words.
 
----
 
 ## 9. Possible Future Improvements
 
