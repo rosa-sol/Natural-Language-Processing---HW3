@@ -53,6 +53,12 @@ The tables are broken because markdown tables don't paste cleanly into all edito
 ## 5. Experimental Results
 
 ### Task 1 — Text Generation (WikiText-2)
+### Evaluation Metrics
+#### Perplexity — measures how well the model predicts a sequence of words. Lower perplexity indicates better performance
+#### Loss — cross-entropy loss tracked across training and validation splits to monitor convergence
+#### Top-5 Accuracy — measures whether the correct next word appears in the model's top 5 predictions
+#### Precision & Recall — token-level exact match between predicted and reference sequences
+#### Train Time & Parameters — captures computational efficiency across configurations
 
 | Arch | Embed | PPL | Loss | Top-5 Acc | Prec | Rec | Params | Best Ep | Time |
 |------|-------|-----|-------|----|------|-----|--------|---------|------|
