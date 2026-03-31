@@ -48,186 +48,38 @@ One-hot encoding represents each word as a sparse binary vector of length equal 
 
 One-hot encoding serves as a baseline for comparison against GloVe. The expectation is that GloVe embeddings will produce better results, particularly on smaller datasets, because they carry pre-learned linguistic knowledge. The tradeoff is that one-hot models have significantly more parameters due to the larger embedding dimension, which increases both memory usage and training time.
 
-## Experimental Results
+## 5. Experimental Results
 Task 1 — Text Generation (WikiText-2)
-Arch	Embed	PPL	Top-5 Acc	Prec	Rec	Params	Best Ep	Time
-GRU	GloVe	239.54	36.70%	0.1892	0.1892	10,897,032	10	4m24s
-GRU	OneHot	237.44	36.93%	0.1914	0.1914	22,663,432	7	5m34s
-RNN	GloVe	321.52	34.30%	0.1749	0.1749	10,450,568	10	3m58s
-RNN	OneHot	325.14	34.65%	0.1771	0.1771	22,012,168	10	5m04s
-
-The GRU architecture outperformed the Basic RNN across all metrics in Task 1. GRU + GloVe achieved the best perplexity (239.54), while GRU + OneHot achieved the best top-5 accuracy (36.93%) and converged earliest (epoch 7). In contrast, RNN models showed significantly higher perplexity (321–325), confirming that GRU’s gating mechanism provides a clear advantage for language modeling. Precision and recall were consistent within architectures, with GRU models around 0.19 and RNN models around 0.17.
-
-GloVe and OneHot embeddings performed similarly in perplexity within each architecture, with OneHot slightly outperforming GloVe. This is likely due to its larger parameter count rather than an inherent advantage. However, GloVe models trained faster and used roughly half the parameters, making them more efficient overall.
-
-Qualitatively, GRU models generated more coherent and topically consistent text. The RNN + OneHot model showed clear degeneration, producing repeated <unk> tokens in later samples, indicating difficulty handling rare vocabulary.
+ArchEmbedPPLTop-5 AccPrecRecParamsBest EpTimeGRUGloVe239.5436.70%0.18920.189210,897,032104m24sGRUOneHot237.4436.93%0.19140.191422,663,43275m34sRNNGloVe321.5234.30%0.17490.174910,450,568103m58sRNNOneHot325.1434.65%0.17710.177122,012,168105m04s
+The GRU architecture outperformed the Basic RNN across all metrics in Task 1. GRU + GloVe achieved the best perplexity (239.54), while GRU + OneHot achieved the best top-5 accuracy (36.93%) and converged earliest at epoch 7. RNN models showed significantly higher perplexity (321–325), confirming that the GRU's gating mechanism provides a clear advantage for language modeling. Precision and recall were consistent within architectures, with GRU models around 0.19 and RNN models around 0.17.
+GloVe and OneHot embeddings performed similarly in perplexity within each architecture, with OneHot slightly outperforming GloVe. This is likely due to its larger parameter count rather than any inherent advantage of the embedding method. However GloVe models trained faster and used roughly half the parameters, making them more efficient overall.
+Qualitatively, GRU models generated more coherent and topically consistent text. The RNN + OneHot model showed clear degeneration, producing repeated unknown tokens in later samples, indicating difficulty handling rare vocabulary.
 
 Task 2 — Machine Translation (Multi30K)
-Arch	Embed	BLEU	METEOR	TER	Prec	Rec	Params	Best Ep	Time
-GRU	GloVe	14.50	22.00	68.00	0.42	0.38	2,767,895	8	2m30s
-GRU	OneHot	10.00	12.00	80.00	0.32	0.35	103,584,544	9	8m00s
-RNN	GloVe	4.50	2.00	82.00	0.28	0.22	2,518,039	7	2m20s
-RNN	OneHot	3.50	0.50	83.00	0.29	0.20	99,854,880	6	7m30s
-
-GRU + GloVe was the best-performing configuration, achieving the highest BLEU (14.50), highest METEOR (22.00), and lowest TER (68.00). These results fall within the expected range (10–25 BLEU) for attention-free seq2seq models on Multi30K, indicating that the model learned meaningful English–German alignments. Convergence at epoch 8 shows effective use of the training schedule.
-
-GRU + OneHot achieved lower performance (BLEU 10.00, METEOR 12.00) and took longer to converge (epoch 9). Despite having ~37× more parameters than GRU + GloVe, it performed worse across all metrics, showing that parameter count alone cannot replace semantically meaningful embeddings. Training time was also significantly longer (8 minutes vs 2m30s).
-
-RNN models performed substantially worse. RNN + GloVe achieved BLEU 4.50 and METEOR 2.00, while RNN + OneHot dropped further to BLEU 3.50 and METEOR 0.50. High TER values (>82) indicate poor translation quality requiring major corrections. The RNN + OneHot model converged earliest (epoch 6), suggesting early plateauing without learning strong translation patterns.
-
+ArchEmbedBLEUMETEORTERPrecRecParamsBest EpTimeGRUGloVe14.5022.0068.000.420.382,767,89582m30sGRUOneHot10.0012.0080.000.320.35103,584,54498m00sRNNGloVe4.502.0082.000.280.222,518,03972m20sRNNOneHot3.500.5083.000.290.2099,854,88067m30s
+GRU + GloVe was the best performing configuration, achieving the highest BLEU (14.50), highest METEOR (22.00), and lowest TER (68.00). These results fall within the expected range of 10–25 BLEU for attention-free seq2seq models on Multi30K, indicating the model learned meaningful English to German alignments. Convergence at epoch 8 shows effective use of the training schedule.
+GRU + OneHot achieved lower performance (BLEU 10.00, METEOR 12.00) and took longer to converge at epoch 9. Despite having roughly 37 times more parameters than GRU + GloVe, it performed worse across all metrics, showing that parameter count alone cannot replace semantically meaningful embeddings. Training time was also significantly longer at 8 minutes vs 2m30s.
+RNN models performed substantially worse. RNN + GloVe achieved BLEU 4.50 and METEOR 2.00, while RNN + OneHot dropped further to BLEU 3.50 and METEOR 0.50. High TER values above 82 indicate poor translation quality requiring major corrections. The RNN + OneHot model converged earliest at epoch 6, suggesting early plateauing without learning strong translation patterns.
 Precision and recall followed the same trend as BLEU. GRU + GloVe achieved the highest precision (0.42) and recall (0.38), while RNN models remained below 0.30 precision. The slight gap between precision and recall for GRU + GloVe suggests mild over-generation, which is common in seq2seq models without length penalties.
-
-Overall Interpretation
-
-Architecture choice had a larger impact than embedding type. The performance gap between GRU and RNN was significantly greater than the gap between GloVe and OneHot within the same architecture. This indicates that addressing the architectural limitation (lack of gating in RNNs) is more critical than improving embeddings alone for sequence modeling tasks.
+Overall, architecture choice had a larger impact than embedding type. The performance gap between GRU and RNN was significantly greater than the gap between GloVe and OneHot within the same architecture, indicating that addressing the architectural limitation through gating is more critical than improving embeddings alone.
 
 ## 6. Comparison of Models
 GRU vs Basic RNN
 Core Architectural Difference
-
-The key distinction between GRU and a basic RNN lies in how they handle information over time.
-
-GRU mechanisms:
-
-Update gate controls how much past information is carried forward.
-Reset gate determines how much past information to forget when processing new input.
-Enables dynamic memory control at each timestep.
-
-Basic RNN limitations:
-
-Uses a single hidden state update with no control over information flow.
-Treats all past information uniformly.
-Highly susceptible to vanishing gradients, leading to loss of long-term dependencies.
-
-Resulting impact:
-
-GRU can retain important context and discard noise.
-RNN gradually loses signal and amplifies noise across long sequences.
-Task 1 (Language Modeling – WikiText-2)
-
-Observed performance:
-
-GRU perplexity ≈ 237–240 vs RNN ≈ 321–325.
-GRU top-5 accuracy ≈ 36.7–36.9% vs RNN ≈ 34.3–34.6%.
-
-Why GRU achieved lower perplexity:
-
-Better modeling of long-range token dependencies (e.g., subject–verb agreement, topic continuity).
-Maintains a more stable hidden representation across long sequences.
-Produces sharper probability distributions over vocabulary.
-
-Why RNN had higher perplexity:
-
-Hidden state becomes less informative as sequence length increases.
-Earlier context is effectively “forgotten.”
-Leads to higher uncertainty in next-word prediction.
-Qualitative Text Generation Behavior
-
-GRU outputs:
-
-Maintained topic continuity across sentences.
-Produced grammatically consistent and semantically plausible phrases.
-Able to transition between ideas without collapsing.
-
-RNN outputs:
-
-Degraded over time into repetitive tokens or <unk> sequences.
-Failed to handle rare vocabulary due to weak contextual grounding.
-Demonstrated exposure bias amplification—errors early in generation compound rapidly.
-
-Underlying reason:
-
-GRU stabilizes hidden state updates through gating.
-RNN accumulates error due to uncontrolled state transitions.
-Task 2 (Machine Translation – Multi30K)
-
-Observed performance:
-
-GRU + GloVe: BLEU ≈ 14.50, METEOR ≈ 22.00.
-RNN models: BLEU < 4.50, METEOR ≈ 0.5–2.0.
-
-Why Task 2 is inherently harder:
-
-Requires mapping between two different languages.
-Needs preservation of word order, semantics, and grammatical structure.
-Encoder must compress entire source sentence into a fixed-length vector.
-Why GRU performed significantly better
-
-1. Better encoder representation
-
-Update gate allows important words (e.g., nouns, verbs) to persist.
-Reduces information loss during sequence compression.
-
-2. Improved decoder conditioning
-
-Hidden state passed to decoder retains richer semantic structure.
-Enables more accurate word selection and ordering.
-
-3. Handling long dependencies
-
-Captures relationships between distant words (e.g., subject ↔ adjective ↔ verb).
-Critical for translation correctness.
-Why RNN performance collapsed
-
-1. Information bottleneck failure
-
-Encoder hidden state lacks sufficient information about the full sentence.
-Important tokens are overwritten or diluted.
-
-2. No selective memory
-
-Cannot prioritize key semantic elements.
-Treats function words and critical content words equally.
-
-3. Error propagation in decoding
-
-Weak initial representation leads to poor early predictions.
-Errors cascade, resulting in repetitive or nonsensical outputs.
-Effect of No Attention Mechanism
-
-Impact on both models:
-
-Decoder relies entirely on a single fixed vector from the encoder.
-No ability to “look back” at specific source words.
-
-Why GRU still performs better:
-
-Encodes a higher-quality summary representation.
-
-Why RNN suffers more:
-
-Poor compression leads to severe information loss.
-Cannot recover missing context during decoding.
+The key distinction between GRU and basic RNN lies in how they handle information over time. The GRU uses an update gate to control how much past information is carried forward and a reset gate to determine how much past information to forget when processing new input, enabling dynamic memory control at each timestep. The basic RNN uses a single hidden state update with no control over information flow, treats all past information uniformly, and is highly susceptible to vanishing gradients, leading to loss of long-term dependencies. As a result the GRU can retain important context and discard noise, while the RNN gradually loses signal across long sequences.
+Task 1 — Language Modeling
+The GRU achieved perplexity of 237–240 compared to 321–325 for the RNN, and top-5 accuracy of 36.7–36.9% compared to 34.3–34.6%. The GRU's better modeling of long-range token dependencies such as subject-verb agreement and topic continuity allowed it to maintain a more stable hidden representation and produce sharper probability distributions over the vocabulary. The RNN's hidden state became less informative as sequence length increased, leading to higher uncertainty in next-word prediction.
+Qualitatively, GRU outputs maintained topic continuity and produced grammatically consistent phrases, while RNN outputs degraded over time into repetitive tokens or unknown token sequences. The RNN failed to handle rare vocabulary due to weak contextual grounding, and errors early in generation compounded rapidly due to exposure bias.
+Task 2 — Machine Translation
+GRU + GloVe achieved BLEU 14.50 and METEOR 22.00, while RNN models scored below BLEU 4.50 and METEOR 2.00. Machine translation is inherently harder because the encoder must compress an entire source sentence into a fixed-length vector while preserving word order, semantics, and grammatical structure. The GRU's update gate allowed important words such as nouns and verbs to persist through this compression, resulting in richer hidden state representations that enabled more accurate word selection and ordering in the decoder. The RNN's encoder hidden state lacked sufficient information about the full source sentence — important tokens were overwritten or diluted, critical content words were treated the same as function words, and the resulting weak initial representation caused errors to cascade through the decoding process, producing repetitive and nonsensical outputs.
 Training Time Tradeoff
+The RNN was marginally faster due to simpler per-timestep computations, but the observed difference was only 10–30 seconds per run. Given the substantial performance improvements of the GRU across all metrics, this speed advantage is negligible. The GRU provides better performance per unit of training time and is the clearly preferable architecture for any task requiring long-term dependency retention.
 
-Observed differences:
+GloVe vs One-Hot Embeddings
+GloVe outperformed one-hot embeddings across both tasks while using dramatically fewer parameters. In Task 1 the two embedding types achieved similar perplexity within each architecture, but GloVe models used roughly half the parameters and trained faster, making them significantly more efficient. In Task 2 the advantage was clearer — GRU + GloVe achieved BLEU 14.50 compared to 10.00 for GRU + OneHot, and METEOR 22.00 compared to 12.00. Despite one-hot models having nearly 100 million parameters compared to 2.8 million for GloVe models, they performed worse across every metric. This confirms that semantic initialization through pre-trained embeddings is far more effective than raw parameter count when training data is limited.
 
-RNN slightly faster (simpler computations per timestep).
-GRU slightly slower due to gating operations.
-
-Why GRU is still preferable:
-
-Time difference is marginal (~10–30 seconds).
-Performance improvements are substantial across all metrics.
-
-Efficiency perspective:
-
-GRU provides better performance per unit time.
-RNN’s speed advantage does not compensate for its accuracy loss.
-Final Interpretation
-GRU’s gating mechanism is essential for stable sequence modeling.
-Basic RNNs fail in tasks requiring long-term dependency retention.
-The performance gap widens as task complexity increases (especially in translation).
-
-### GRU vs Basic RNN
-The GRU is expected to outperform the basic RNN on both tasks due to its gating mechanism, which allows it to better capture long-range dependencies in text. In language modeling, where context from many tokens back can be relevant, this advantage is particularly significant. The basic RNN is prone to forgetting early context as sequences grow longer, which tends to result in higher perplexity and lower BLEU scores. However, the basic RNN trains faster per epoch due to its simpler computation, so the tradeoff between performance and speed is visible in the train time metric.
-
-### GloVe vs One-Hot Embeddings
-GloVe embeddings are expected to outperform one-hot encodings on both tasks, particularly on the smaller Multi30K dataset where limited training data makes it harder to learn good representations from scratch. The semantic structure encoded in GloVe vectors gives the model a meaningful starting point, which typically leads to faster convergence and better generalization. One-hot models require learning all word relationships purely from the training signal, which demands more data and more epochs to achieve comparable performance. The one-hot models also have significantly more parameters due to the larger embedding dimension, which increases memory usage and training time considerably.
-
-### Task 1 vs Task 2
-Text generation is a simpler task than machine translation in the sense that it only requires modeling one language. Machine translation introduces the additional challenge of aligning two different languages and generating coherent output in the target language, which generally makes it harder to achieve good performance. BLEU scores for neural machine translation on Multi30K with small models are typically in the range of 10–25, which reflects this difficulty.
-
+Task 1 vs Task 2
+Text generation produced more competitive results relative to the state of the art than machine translation. Task 1 GRU models generated qualitatively reasonable text continuations, while Task 2 models were constrained by the encoder-decoder bottleneck and the absence of an attention mechanism. The best Task 2 configuration achieved BLEU 14.50, which is within the expected range for attention-free seq2seq models but still reflects translations that occasionally miss key words or produce structural errors. Task 1 does not face this bottleneck since the language model processes source and target in the same sequence, which partly explains the more competitive relative performance on that task.
 
 ## 7. Challenges Faced During Implementation
 
