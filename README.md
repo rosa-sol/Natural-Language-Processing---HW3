@@ -61,6 +61,20 @@ The tables are broken because markdown tables don't paste cleanly into all edito
 | RNN | GloVe | 321.52 | 5.848 | 34.30% | 0.1749 | 0.1749 | 10,450,568 | 10 | 3m58s |
 | RNN | OneHot | 325.14 | 5.8471 | 34.65% | 0.1771 | 0.1771 | 22,012,168 | 10 | 5m04s |
 
+### Qualitative Examples — Generated Text:
+### Seed: "the president of the united states"
+
+GRU + GloVe: "the president of the united states for a large number of men in the area however it was an important source of a tropical storm on august 7 2011..."
+RNN + OneHot: "the president of the united states of portuguese troops that would be unk to continue their operations and the portuguese forces..."
+
+### Seed: "scientists have recently discovered"
+
+GRU + GloVe: "scientists have recently discovered that the unk of the unk is usually a unk unk or a unk with a repellent unk..."
+RNN + OneHot: "scientists have recently discovered the fruit bodies have been found on several species in the other unk are found in the shape..."
+
+### Seed: "in the early nineteenth century"
+
+GRU + GloVe: "in the early nineteenth century from the 1980s onwards the unk of the song and the french and unk the unk of the song have been described..."
 
 ### Key Findings:
 
