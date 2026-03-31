@@ -123,14 +123,14 @@ Demonstrated exposure bias amplification—errors early in generation compound r
 ### Underlying reason:
 GRU stabilizes hidden state updates through gating.
 RNN accumulates error due to uncontrolled state transitions.
-Task 2 (Machine Translation – Multi30K)
+
+### Task 2 (Machine Translation – Multi30K)
 
 ### Observed performance:
 GRU + GloVe: BLEU ≈ 14.50, METEOR ≈ 22.00.
 RNN models: BLEU < 4.50, METEOR ≈ 0.5–2.0.
 
-#### Why Task 2 is inherently harder:
-
+#### Why Task 2 is more complex:
 Requires mapping between two different languages.
 Needs preservation of word order, semantics, and grammatical structure.
 Encoder must compress entire source sentence into a fixed-length vector.
@@ -146,7 +146,7 @@ Enables more accurate word selection and ordering.
 Captures relationships between distant words (e.g., subject ↔ adjective ↔ verb).
 Critical for translation correctness.
 
-### Why RNN performance collapsed
+### Why RNN performance collapsed:
 ### 1. Information bottleneck failure
 Encoder hidden state lacks sufficient information about the full sentence.
 Important tokens are overwritten or diluted.
