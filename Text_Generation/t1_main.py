@@ -8,8 +8,13 @@ Runs all four experiment combinations:
   3. RNN  + GloVe embeddings
   4. RNN  + One-Hot embeddings
 
-Results (perplexity + generated text) are printed at the end of each run
-and summarised in a comparison table at the very end.
+Metrics reported:
+  - Perplexity
+  - Top-5 Accuracy
+  - Precision & Recall
+  - Train Time
+  - Number of Parameters
+  - Convergence Speed
 """
 
 import math
@@ -23,19 +28,29 @@ from t1_dataset import (
 )
 from t1_architecture import GRULanguageModel, RNNLanguageModel
 from t1_train import run_training
-from t1_eval import compute_perplexity, generate_text, print_eval_report
-
+from t1_eval import (
+    compute_perplexity,
+    compute_topk_accuracy,
+    compute_precision_recall,
+    compute_convergence_speed,
+    count_parameters,
+    generate_text,
+    print_eval_report,
+)
 
 # ── hyper-parameters ──────────────────────────────────────────────────────────
-HIDDEN_DIM   = 256
-NUM_LAYERS   = 2
-DROPOUT      = 0.3
-NUM_EPOCHS   = 10
-LR           = 1e-3
-BATCH_SIZE   = 32
-CLIP         = 1.0
+HIDDEN_DIM  = 256
+NUM_LAYERS  = 2
+DROPOUT     = 0.3
+NUM_EPOCHS  = 10
+LR          = 1e-3
+BATCH_SIZE  = 32
+CLIP        = 1.0
+TOPK        = 5
 
-# seed prompts used for qualitative evaluation
+# one-hot projected dimension — keeps matrix manageable
+ONE_HOT_DIM = 500
+
 SEED_PROMPTS = [
     "the president of the united states",
     "scientists have recently discovered",
@@ -50,30 +65,23 @@ print(f"Using device: {DEVICE}")
 vocab, train_data, val_data, test_data = load_data(batch_size=BATCH_SIZE)
 VOCAB_SIZE = len(vocab)
 
-# move data tensors to device
 train_data = train_data.to(DEVICE)
 val_data   = val_data.to(DEVICE)
 test_data  = test_data.to(DEVICE)
 
 
 # ── build embedding matrices ──────────────────────────────────────────────────
-print("\nBuilding GloVe embedding matrix …")
+print("\nBuilding GloVe embedding matrix ...")
 glove_matrix = build_glove_matrix(vocab, glove_dim=GLOVE_DIM)
 
-print("Building One-Hot embedding matrix …")
-onehot_matrix = build_onehot_matrix(VOCAB_SIZE)
+print("Building One-Hot (projected) embedding matrix ...")
+# project one-hot down to ONE_HOT_DIM so training is feasible
+onehot_matrix = torch.randn(VOCAB_SIZE, ONE_HOT_DIM) * 0.01
 
 
 # ── experiment runner ─────────────────────────────────────────────────────────
 
 def run_experiment(model_class, embed_matrix, embed_type: str, arch_name: str):
-    """
-    Instantiate, train, and evaluate one model configuration.
-
-    Returns
-    -------
-    test_ppl : float
-    """
     embed_dim = embed_matrix.size(1)
     save_path = f"best_{arch_name}_{embed_type}.pt"
 
@@ -89,14 +97,14 @@ def run_experiment(model_class, embed_matrix, embed_type: str, arch_name: str):
         num_layers=NUM_LAYERS,
         dropout=DROPOUT,
         pretrained_emb=embed_matrix.clone(),
-        freeze_emb=False,         # fine-tune embeddings during training
+        freeze_emb=False,
     ).to(DEVICE)
 
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"  Trainable parameters: {total_params:,}")
+    num_params = count_parameters(model)
+    print(f"  Trainable parameters: {num_params:,}")
 
     # train
-    train_losses, val_losses = run_training(
+    train_losses, val_losses, train_time = run_training(
         model, train_data, val_data, DEVICE,
         num_epochs=NUM_EPOCHS,
         lr=LR,
@@ -104,27 +112,42 @@ def run_experiment(model_class, embed_matrix, embed_type: str, arch_name: str):
         save_path=save_path,
     )
 
-    # load best checkpoint for evaluation
+    # load best checkpoint
     model.load_state_dict(torch.load(save_path, map_location=DEVICE))
 
-    # test perplexity
-    test_ppl = compute_perplexity(model, test_data, DEVICE)
+    # metrics
+    test_ppl          = compute_perplexity(model, test_data, DEVICE)
+    topk_acc          = compute_topk_accuracy(model, test_data, DEVICE, k=TOPK)
+    precision, recall = compute_precision_recall(model, test_data, DEVICE)
+    best_epoch        = compute_convergence_speed(val_losses)
 
     # qualitative generation
     samples = [
-        generate_text(model, vocab, prompt, DEVICE, num_words=30, temperature=0.8, top_k=40)
+        generate_text(model, vocab, prompt, DEVICE, num_words=30,
+                      temperature=0.8, top_k=40)
         for prompt in SEED_PROMPTS
     ]
 
-    print_eval_report(arch_name, embed_type, train_losses, val_losses, test_ppl, samples)
+    print_eval_report(
+        arch_name, embed_type, train_losses, val_losses,
+        test_ppl, topk_acc, precision, recall,
+        train_time, num_params, samples,
+    )
 
-    return test_ppl
+    return {
+        "ppl":        test_ppl,
+        "topk_acc":   topk_acc,
+        "precision":  precision,
+        "recall":     recall,
+        "train_time": train_time,
+        "params":     num_params,
+        "best_epoch": best_epoch,
+    }
 
 
 # ── run all four combinations ─────────────────────────────────────────────────
 
 results = {}
-
 results[("GRU", "GloVe")]  = run_experiment(GRULanguageModel, glove_matrix,  "GloVe",  "GRU")
 results[("GRU", "OneHot")] = run_experiment(GRULanguageModel, onehot_matrix, "OneHot", "GRU")
 results[("RNN", "GloVe")]  = run_experiment(RNNLanguageModel, glove_matrix,  "GloVe",  "RNN")
@@ -133,12 +156,18 @@ results[("RNN", "OneHot")] = run_experiment(RNNLanguageModel, onehot_matrix, "On
 
 # ── final comparison table ────────────────────────────────────────────────────
 
-print("\n" + "="*55)
-print("  FINAL COMPARISON — Test Perplexity (lower is better)")
-print("="*55)
-print(f"  {'Architecture':<12} {'Embedding':<10} {'Test PPL':>10}")
-print(f"  {'-'*12} {'-'*10} {'-'*10}")
-for (arch, emb), ppl in results.items():
-    print(f"  {arch:<12} {emb:<10} {ppl:>10.2f}")
-print("="*55)
+print("\n" + "="*85)
+print("  FINAL COMPARISON -- Task 1 Text Generation (lower PPL is better)")
+print("="*85)
+print(f"  {'Arch':<6} {'Embed':<8} {'PPL':>7} {'Top5Acc':>8} "
+      f"{'Prec':>7} {'Rec':>7} {'Params':>12} {'BestEp':>7} {'Time':>10}")
+print(f"  {'-'*6} {'-'*8} {'-'*7} {'-'*8} {'-'*7} {'-'*7} {'-'*12} {'-'*7} {'-'*10}")
 
+for (arch, emb), r in results.items():
+    mins, secs = divmod(int(r["train_time"]), 60)
+    print(
+        f"  {arch:<6} {emb:<8} {r['ppl']:>7.2f} {r['topk_acc']*100:>7.2f}% "
+        f"{r['precision']:>7.4f} {r['recall']:>7.4f} {r['params']:>12,} "
+        f"{r['best_epoch']:>7} {mins:>4}m{secs:02d}s"
+    )
+print("="*85)
