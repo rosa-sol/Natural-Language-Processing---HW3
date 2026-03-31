@@ -50,8 +50,11 @@ One-hot encoding serves as a baseline for comparison against GloVe. The expectat
 
 
 ## 5. Experimental Results
-
-*Results to be filled in after running experiments.*
+Task 1 — Text Generation (WikiText-2)
+ArchEmbedPPLTop5AccPrecRecParamsBestEpTimeGRUGloVe239.5436.70%0.18920.189210,897,032104m24sGRUOneHot237.4436.93%0.19140.191422,663,43275m34sRNNGloVe321.5234.30%0.17490.174910,450,568103m58sRNNOneHot325.1434.65%0.17710.177122,012,168105m04s
+The GRU architecture outperformed the Basic RNN across all metrics in Task 1. GRU + GloVe achieved the best perplexity of 239.54, while GRU + OneHot achieved the best top-5 accuracy of 36.93% and converged earliest at epoch 7. The RNN models both showed higher perplexity values around 321–325, confirming that the GRU's gating mechanism provides a meaningful advantage for language modeling. Precision and recall values were consistent within each architecture, with GRU models scoring around 0.19 and RNN models around 0.17.
+Notably, the GloVe and OneHot models performed similarly in terms of perplexity within each architecture, with OneHot slightly outperforming GloVe on this metric despite having no semantic prior knowledge. This is likely because the one-hot projected embeddings have a higher parameter count, giving the model more capacity. However GloVe models trained faster and used roughly half the parameters, making them more efficient overall.
+Qualitative inspection of the generated text shows that GRU models produce more coherent and topically consistent continuations than RNN models. The RNN + OneHot model in particular showed signs of degeneration, repeatedly producing long runs of the token "unk" in its third generated sample, which indicates the model struggled to generalize to rare vocabulary.
 
 
 ## 6. Comparison of Models
