@@ -97,6 +97,26 @@ One-hot performance gains are likely due to higher parameter count, not better r
 | RNN | GloVe | 4.50 | 2.00 | 82.00 | 0.28 | 0.22 | 2,518,039 | 7 | 2m20s |
 | RNN | OneHot | 3.50 | 0.50 | 83.00 | 0.29 | 0.20 | 99,854,880 | 6 | 7m30s |
 
+### Qualitative Examples — Translations:
+### Source: "a dog is running in the park"
+
+GRU + GloVe: "hund rennt durchs schnee" (dog runs through snow)
+GRU + OneHot: "ein hund springt auf einem unk auf einem unk unk der luft"
+RNN + GloVe: "ein mann in einem einem und und einem"
+RNN + OneHot: "ein mann in einem einem und einem"
+
+### Source: "two children are playing outside"
+
+GRU + GloVe: "kinder kinder spielen" (children children play)
+GRU + OneHot: "zwei hunde spielen auf einem unk auf einem unk"
+RNN + GloVe: "ein mann in einem einem und und einem"
+RNN + OneHot: "ein mann in einem einem und einem"
+
+### Source: "the man is wearing a red shirt"
+
+GRU + GloVe: "mann mann mit einem blauen" (man man with a blue)
+GRU + OneHot: "ein mann in einem blauen oberteil und auf einem unk"
+
 ### Key Findings:
 
 GRU >> RNN: Large performance gap across all metrics
