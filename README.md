@@ -144,99 +144,85 @@ GloVe provides semantic priors, improving learning efficiency
 ### Task 1 vs Task 2
 ### Within Task 1 — Text Generation:
 
-GRU + GloVe and GRU + OneHot performed nearly identically in perplexity (239.54 vs 237.44), suggesting that for language modeling on WikiText-2 the embedding type matters less than the architecture
-GRU models outperformed RNN models by roughly 80 perplexity points, which was the largest performance gap observed in Task 1
-OneHot models had 2x more parameters than their GloVe counterparts but delivered no meaningful performance improvement, indicating wasted capacity
-RNN + GloVe and RNN + OneHot also performed similarly to each other (321.52 vs 325.14), reinforcing that the architectural choice dominated the embedding choice in this task
-Convergence speed differed notably — GRU + OneHot converged at epoch 7 while all other models needed all 10 epochs, suggesting the higher parameter count helped it find a solution faster even if not a better one
-Training times were comparable across all four configurations (4–5 minutes), meaning there was no significant computational cost tradeoff to consider in Task 1
+- GRU + GloVe and GRU + OneHot performed nearly identically in perplexity (239.54 vs 237.44), suggesting that for language modeling on WikiText-2 the embedding type matters less than the architecture
+- GRU models outperformed RNN models by roughly 80 perplexity points, which was the largest performance gap observed in Task 1
+- OneHot models had 2x more parameters than their GloVe counterparts but delivered no meaningful performance improvement, indicating wasted capacity
+- RNN + GloVe and RNN + OneHot also performed similarly to each other (321.52 vs 325.14), reinforcing that the architectural choice dominated the embedding choice in this task
+- Convergence speed differed notably — GRU + OneHot converged at epoch 7 while all other models needed all 10 epochs, suggesting the higher parameter count helped it find a solution faster even if not a better one
+- Training times were comparable across all four configurations (4–5 minutes), meaning there was no significant computational cost tradeoff to consider in Task 1
 
 ### Within Task 2 — Machine Translation:
 
-GRU + GloVe was the clear standout, outperforming the next best model (GRU + OneHot) by 4.50 BLEU points and 10.00 METEOR points, a much larger gap than seen within Task 1
-GRU + OneHot showed that even without semantic embeddings, the GRU architecture alone was sufficient to produce meaningful translations, scoring BLEU 10.00 compared to near-zero for both RNN models
-Both RNN configurations collapsed to near-identical translations for all sample sentences regardless of input, while both GRU configurations produced distinct and structurally varied outputs — this is the clearest illustration of the architectural gap in the entire experiment
-The parameter count difference between GloVe and OneHot models was far more extreme in Task 2 than Task 1 — 2.8M vs 103M — yet the OneHot models were still outperformed, making Task 2 the stronger demonstration that pre-trained embeddings outperform raw capacity
-Training time differences were more significant in Task 2, with OneHot models taking 3x longer than GloVe models (8m vs 2m30s for GRU), making the efficiency argument for GloVe much more compelling here than in Task 1
-RNN + GloVe and RNN + OneHot performed almost identically (BLEU 4.50 vs 3.50), suggesting the RNN architecture was the binding constraint and no embedding improvement could compensate for it
- Sonnet 4.6
+- GRU + GloVe was the clear standout, outperforming the next best model (GRU + OneHot) by 4.50 BLEU points and 10.00 METEOR points, a much larger gap than seen within Task 1
+- GRU + OneHot showed that even without semantic embeddings, the GRU architecture alone was sufficient to produce meaningful translations, scoring BLEU 10.00 compared to near-zero for both RNN models
+- Both RNN configurations collapsed to near-identical translations for all sample sentences regardless of input, while both GRU configurations produced distinct and structurally varied outputs — this is the clearest illustration of the architectural gap in the entire experiment
+- The parameter count difference between GloVe and OneHot models was far more extreme in Task 2 than Task 1 — 2.8M vs 103M — yet the OneHot models were still outperformed, making Task 2 the stronger demonstration that pre-trained embeddings outperform raw capacity
+- Training time differences were more significant in Task 2, with OneHot models taking 3x longer than GloVe models (8m vs 2m30s for GRU), making the efficiency argument for GloVe much more compelling here than in Task 1
+- RNN + GloVe and RNN + OneHot performed almost identically (BLEU 4.50 vs 3.50), suggesting the RNN architecture was the binding constraint and no embedding improvement could compensate for it
 
 ### GRU vs RNN (Loss Behavior)
-
-GRU models consistently achieved lower training and validation loss than RNN models across both tasks.
-
+- GRU models consistently achieved lower training and validation loss than RNN models across both tasks.
 ### Why GRU performed better:
-
-Uses update and reset gates to control information flow
-Retains important context across long sequences
-Produces more accurate probability distributions
-
+- Uses update and reset gates to control information flow
+- Retains important context across long sequences
+- Produces more accurate probability distributions
 ### Why RNN had higher loss:
-
-No gating mechanism → cannot selectively remember or forget
-Hidden state degrades over time
-Leads to less confident and less accurate predictions
+- No gating mechanism → cannot selectively remember or forget
+- Hidden state degrades over time
+- Leads to less confident and less accurate predictions
 
 ### Result:
-
-GRU models converged to lower loss values
-RNN models plateaued earlier and could not reduce loss further
-GloVe vs One-Hot (Loss Behavior)
-Task 1 (Language Modeling)
-Loss values were similar between GloVe and One-Hot
-One-Hot sometimes achieved slightly lower training loss
+- GRU models converged to lower loss values
+- RNN models plateaued earlier and could not reduce loss further
+- GloVe vs One-Hot (Loss Behavior)
+- Task 1 (Language Modeling)
+- Loss values were similar between GloVe and One-Hot
+- One-Hot sometimes achieved slightly lower training loss
 
 Reason:
-
-One-Hot embeddings increase parameter count
-More capacity allows better memorization of training data
+- One-Hot embeddings increase parameter count
+- More capacity allows better memorization of training data
 
 However:
-
-GloVe achieved similar validation loss with fewer parameters
-Indicates better efficiency and generalization
-Task 2 (Machine Translation)
-GRU + GloVe achieved the lowest validation loss
-One-Hot models had higher loss and slower convergence
+- GloVe achieved similar validation loss with fewer parameters
+- Indicates better efficiency and generalization
+- Task 2 (Machine Translation)
+- GRU + GloVe achieved the lowest validation loss
+- One-Hot models had higher loss and slower convergence
 
 ### Why GloVe performed better:
-
-Provides semantic relationships between words
-Reduces the need to learn meaning from scratch
-Leads to faster and more stable training
+- Provides semantic relationships between words
+- Reduces the need to learn meaning from scratch
+- Leads to faster and more stable training
 
 ### Why One-Hot struggled:
-
-No semantic structure
-Requires more data to learn effective representations
-Higher parameter count did not translate to lower loss
-Training vs Validation Loss
-
+- No semantic structure
+- Requires more data to learn effective representations
+- Higher parameter count did not translate to lower loss
+- Training vs Validation Loss
+  
 ### GRU models:
-
-Smooth and stable decrease in loss
-Smaller gap between training and validation loss
-Better generalization
+- Smooth and stable decrease in loss
+- Smaller gap between training and validation loss
+- Better generalization
 
 ### RNN models:
-
-Higher overall loss
-Larger gap between training and validation
-Indicates weaker learning and less stable representations
-Convergence Behavior
-GRU + OneHot converged earlier (epoch 7) due to higher capacity
-GRU + GloVe converged later (epoch 10) with more stable learning
-RNN models plateaued early and stopped improving
-Key Takeaways
-Lower loss corresponds to better sequence modeling
-GRU reduces loss more effectively due to gated memory
-GloVe improves learning efficiency through semantic initialization
-Increasing parameters (One-Hot) does not guarantee better performance
+- Higher overall loss
+- Larger gap between training and validation
+- Indicates weaker learning and less stable representations
+- Convergence Behavior
+- GRU + OneHot converged earlier (epoch 7) due to higher capacity
+- GRU + GloVe converged later (epoch 10) with more stable learning
+- RNN models plateaued early and stopped improving
 
 ### Final Interpretation
-GRU’s gating mechanism is essential for stable sequence modeling.
-Basic RNNs fail in tasks requiring long-term dependency retention.
-The performance gap widens as task complexity increases (especially in translation).
+- GRU’s gating mechanism is essential for stable sequence modeling.
+- Basic RNNs fail in tasks requiring long-term dependency retention.
+- The performance gap widens as task complexity increases (especially in translation).
+- Lower loss corresponds to better sequence modeling
+- GRU reduces loss more effectively due to gated memory
+- GloVe improves learning efficiency through semantic initialization
+- Increasing parameters (One-Hot) does not guarantee better performance
 
 ## 7. Challenges Faced During Implementation
 
