@@ -61,6 +61,94 @@ The tables are broken because markdown tables don't paste cleanly into all edito
 | RNN | GloVe | 321.52 | 34.30% | 0.1749 | 0.1749 | 10,450,568 | 10 | 3m58s |
 | RNN | OneHot | 325.14 | 34.65% | 0.1771 | 0.1771 | 22,012,168 | 10 | 5m04s |
 
+=================================================================
+  EVALUATION REPORT -- GRU + GloVe embeddings
+=================================================================
+  Parameters       : 10,897,032
+  Train time       : 4m 24s
+  Convergence      : best val loss at epoch 10/10
+  Final train loss : 4.9249  (ppl 137.68)
+  Final val   loss : 5.5550  (ppl 258.53)
+  Test perplexity  : 239.54
+  Top-5 accuracy   : 36.70%
+  Precision        : 0.1892
+  Recall           : 0.1892
+
+  -- Generated samples --------------------------------------
+
+  [1] the president of the united states for a large number of men in the area however it was an important source of a tropical storm on august 7 2011 on may 19 2008 in the united
+
+  [2] scientists have recently discovered that the unk of the unk is usually a unk unk or a unk with a repellent unk with the exception of some of the oldest and the most recent
+
+  [3] in the early nineteenth century from the 1980s onwards the unk of the song and the french and unk the unk of the song have been described as a unk in the process of a
+=================================================================
+=================================================================
+  EVALUATION REPORT -- GRU + OneHot embeddings
+=================================================================
+  Parameters       : 22,663,432
+  Train time       : 5m 34s
+  Convergence      : best val loss at epoch 7/10
+  Final train loss : 4.6447  (ppl 104.03)
+  Final val   loss : 5.5285  (ppl 251.78)
+  Test perplexity  : 237.44
+  Top-5 accuracy   : 36.93%
+  Precision        : 0.1914
+  Recall           : 0.1914
+
+  -- Generated samples --------------------------------------
+
+  [1] the president of the united states of the kingdom of jerusalem after his arrival in the united states the unk had been the only highest officer in the british somaliland which would be used for several
+
+  [2] scientists have recently discovered that the kakapo was also responsible for sinking the dominican curriculum in the 1960s the kakapo was named by barnum brown and had been replaced by the jin as a
+
+  [3] in the early nineteenth century ce from the periplus of the erythraean sea where these forms are now considered part of the most significant species of the unk itself the unk and greek unk the
+=================================================================
+-
+
+=================================================================
+  EVALUATION REPORT -- RNN + GloVe embeddings
+=================================================================
+  Parameters       : 10,450,568
+  Train time       : 3m 58s
+  Convergence      : best val loss at epoch 10/10
+  Final train loss : 5.2767  (ppl 195.73)
+  Final val   loss : 5.8488  (ppl 346.82)
+  Test perplexity  : 321.52
+  Top-5 accuracy   : 34.30%
+  Precision        : 0.1749
+  Recall           : 0.1749
+
+ -- Generated samples --------------------------------------
+
+  [1] the president of the united states the portuguese government decided to be found in the middle colonies although the british government is a the city in a village to the west end of the west of
+
+  [2] scientists have recently discovered that are the right to visit to the country 's most important method of its origin and the use of the unk unk unk unk are a unk unk unk
+
+  [3] in the early nineteenth century that he was published in the 1940s he later said that the coldrum stones and the unk was a churrigueresque in the unk of saints and unk unk the unk
+=================================================================
+
+=================================================================
+  EVALUATION REPORT -- RNN + OneHot embeddings
+=================================================================
+  Parameters       : 22,012,168
+  Train time       : 5m 4s
+  Convergence      : best val loss at epoch 10/10
+  Final train loss : 4.9941  (ppl 147.55)
+  Final val   loss : 5.8471  (ppl 346.22)
+  Test perplexity  : 325.14
+  Top-5 accuracy   : 34.65%
+  Precision        : 0.1771
+  Recall           : 0.1771
+
+  -- Generated samples --------------------------------------
+
+  [1] the president of the united states of portuguese troops that would be unk to continue their operations and the portuguese forces and extensive support of the war of the portuguese revolution were made by the colonial
+
+  [2] scientists have recently discovered the fruit bodies have been found on several species in the other unk are found in the shape the nasals prefrontals unk frontals with the unk unk which is based
+
+  [3] in the early nineteenth century finkelstein 's unk unk is the unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk
+=================================================================
+
 ### Key Findings:
 
 GRU > RNN: ~80 lower perplexity and higher accuracy
