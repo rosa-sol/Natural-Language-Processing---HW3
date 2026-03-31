@@ -61,6 +61,7 @@ The tables are broken because markdown tables don't paste cleanly into all edito
 | RNN | GloVe | 321.52 | 34.30% | 0.1749 | 0.1749 | 10,450,568 | 10 | 3m58s |
 | RNN | OneHot | 325.14 | 34.65% | 0.1771 | 0.1771 | 22,012,168 | 10 | 5m04s |
 
+"""
 =================================================================
   EVALUATION REPORT -- GRU + GloVe embeddings
 =================================================================
@@ -146,9 +147,8 @@ The tables are broken because markdown tables don't paste cleanly into all edito
 
   [2] scientists have recently discovered the fruit bodies have been found on several species in the other unk are found in the shape the nasals prefrontals unk frontals with the unk unk which is based
 
-  [3] in the early nineteenth century finkelstein 's unk unk is the unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk unk
 =================================================================
-
+"""
 ### Key Findings:
 
 GRU > RNN: ~80 lower perplexity and higher accuracy
