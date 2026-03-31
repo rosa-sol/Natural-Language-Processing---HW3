@@ -96,12 +96,9 @@ One-hot performance gains are likely due to higher parameter count, not better r
 
 ### Task 2 — Machine Translation (Multi30K)
 ### Other Evaluation Metrics
-#### BLEU: 
-Measures how closely a generated translation matches a reference by comparing overlapping word sequences, with higher scores indicating better accuracy.
-### METEOR: 
-Evaluates translation quality based on word alignment, including synonyms and stemming, giving a better sense of semantic similarity.
-### TER: 
-Measures the number of edits required to transform a generated translation into the reference, with lower scores indicating better performance.
+#### BLEU: Measures how closely a generated translation matches a reference by comparing overlapping word sequences, with higher scores indicating better accuracy.
+#### METEOR: Evaluates translation quality based on word alignment, including synonyms and stemming, giving a better sense of semantic similarity.
+#### TER: Measures the number of edits required to transform a generated translation into the reference, with lower scores indicating better performance.
 
 | Arch | Embed | BLEU | METEOR | TER | Prec | Rec | Params | Best Ep | Time |
 |------|-------|------|--------|-----|------|-----|--------|---------|------|
