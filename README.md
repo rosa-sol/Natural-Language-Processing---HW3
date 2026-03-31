@@ -54,12 +54,12 @@ The tables are broken because markdown tables don't paste cleanly into all edito
 
 ### Task 1 — Text Generation (WikiText-2)
 
-| Arch | Embed | PPL | Top-5 Acc | Prec | Rec | Params | Best Ep | Time |
-|------|-------|-----|-----------|------|-----|--------|---------|------|
-| GRU | GloVe | 239.54 | 36.70% | 0.1892 | 0.1892 | 10,897,032 | 10 | 4m24s |
-| GRU | OneHot | 237.44 | 36.93% | 0.1914 | 0.1914 | 22,663,432 | 7 | 5m34s |
-| RNN | GloVe | 321.52 | 34.30% | 0.1749 | 0.1749 | 10,450,568 | 10 | 3m58s |
-| RNN | OneHot | 325.14 | 34.65% | 0.1771 | 0.1771 | 22,012,168 | 10 | 5m04s |
+| Arch | Embed | PPL | Loss | Top-5 Acc | Prec | Rec | Params | Best Ep | Time |
+|------|-------|-----|-------|----|------|-----|--------|---------|------|
+| GRU | GloVe | 239.54 | 4.924 | 36.70% | 0.1892 | 0.1892 | 10,897,032 | 10 | 4m24s |
+| GRU | OneHot | 237.44 | 4.644 | 36.93% | 0.1914 | 0.1914 | 22,663,432 | 7 | 5m34s |
+| RNN | GloVe | 321.52 | 5.848 | 34.30% | 0.1749 | 0.1749 | 10,450,568 | 10 | 3m58s |
+| RNN | OneHot | 325.14 | 5.8471 | 34.65% | 0.1771 | 0.1771 | 22,012,168 | 10 | 5m04s |
 
 
 ### Key Findings:
