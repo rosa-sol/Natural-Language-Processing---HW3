@@ -254,8 +254,6 @@ However:
 
 **Add attention mechanism:** Implementing Bahdanau or Luong attention in the seq2seq decoder would allow the model to dynamically focus on relevant parts of the source sentence at each decoding step, directly addressing the information bottleneck of the fixed hidden state. This is the single most impactful improvement available for Task 2.
 
-**Use beam search at inference:** Replacing greedy decoding with beam search (beam size 4 or 5) would improve translation quality without any changes to the model or training procedure. This is a low-effort, high-impact improvement for BLEU scores.
-
 **Subword tokenization:** Replacing word-level tokenization with byte-pair encoding (BPE) or SentencePiece would reduce the unknown token rate, improve handling of rare and morphologically complex words, and produce smaller vocabularies with better coverage. This would be particularly beneficial for German in Task 2.
 
 **Larger pre-trained embeddings:** Experimenting with higher-dimensional GloVe vectors (200d or 300d) or more recent contextualized embeddings such as fastText could improve the quality of word representations and boost downstream task performance.
